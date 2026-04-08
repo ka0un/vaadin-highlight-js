@@ -14,6 +14,7 @@ class HighlightJsTest {
         assertEquals("auto", hljs.getLanguage());
         assertEquals("", hljs.getCode());
         assertFalse(hljs.isShowLineNumbers());
+        assertTrue(hljs.isUseJavaHeuristic());
     }
 
     @Test
@@ -49,6 +50,13 @@ class HighlightJsTest {
         HighlightJs hljs = new HighlightJs();
         hljs.setLanguage(null);
         assertEquals("auto", hljs.getLanguage());
+    }
+
+    @Test
+    void javaHeuristicCanBeDisabled() {
+        HighlightJs hljs = new HighlightJs();
+        hljs.setUseJavaHeuristic(false);
+        assertFalse(hljs.isUseJavaHeuristic());
     }
 
     @Test

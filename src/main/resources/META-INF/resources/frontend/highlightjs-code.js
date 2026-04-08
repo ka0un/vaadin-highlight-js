@@ -49,6 +49,9 @@ class HighlightjsCode extends LitElement {
       /** Language key, e.g. "java", "python", "auto" */
       language: { type: String },
 
+      /** Whether Java-first heuristic is applied before highlight.js auto-detection */
+      useJavaHeuristic: { type: Boolean },
+
       /** highlight.js theme CSS name, e.g. "github-dark", "monokai" */
       theme: { type: String },
 
@@ -91,6 +94,7 @@ class HighlightjsCode extends LitElement {
     super();
     this.code = '';
     this.language = 'auto';
+    this.useJavaHeuristic = true;
     this.theme = 'vs-dark';
     this.showLineNumbers = false;
     this.showLanguageBadge = true;
@@ -310,13 +314,19 @@ class HighlightjsCode extends LitElement {
       } catch (_) {
         highlightResult = hljs.highlightAuto(codeToProcess);
       }
+    } else if (effectiveLanguage && effectiveLanguage !== 'auto') {
+      try {
+        highlightResult = hljs.highlight(codeToProcess, { language: effectiveLanguage });
+      } catch (_) {
+        highlightResult = hljs.highlightAuto(codeToProcess);
+      }
     } else {
       highlightResult = hljs.highlightAuto(codeToProcess);
     }
 
     return {
       highlightedHtml: highlightResult.value,
-      detectedLang: highlightResult.language || effectiveLanguage,
+      detectedLang: effectiveLanguage !== 'auto' ? effectiveLanguage : (highlightResult.language || 'auto'),
       formattedCode: codeToProcess,
     };
   }
@@ -418,8 +428,32 @@ class HighlightjsCode extends LitElement {
         return 'json';
       } catch(e) {}
     }
+
+    const javaHeuristicMatch = this._detectJavaHeuristic(trimmed);
+    if (javaHeuristicMatch) {
+      return javaHeuristicMatch;
+    }
+
     const detected = hljs.highlightAuto(code);
     return detected.language || 'auto';
+  }
+
+  _detectJavaHeuristic(code) {
+    if (!this.useJavaHeuristic || !code) {
+      return null;
+    }
+
+    let score = 0;
+    if (/^\s*package\s+[a-zA-Z_][\w.]*\s*;/m.test(code)) score += 3;
+    if (/^\s*import\s+(static\s+)?[a-zA-Z_][\w.*]*\s*;/m.test(code)) score += 2;
+    if (/\b(public|private|protected)?\s*(abstract\s+|final\s+)?(class|interface|enum|record)\s+[A-Z][\w$]*/.test(code)) score += 3;
+    if (/\bpublic\s+static\s+void\s+main\s*\(\s*String\s*\[]\s+\w+\s*\)/.test(code)) score += 4;
+    if (/\bSystem\.out\.(print|println|printf)\s*\(/.test(code)) score += 2;
+    if (/^\s*@\w+/m.test(code)) score += 1;
+    if (/\bnew\s+[A-Z][\w$]*\s*\(/.test(code)) score += 1;
+    if (/;/.test(code) && /{/.test(code) && /}/.test(code)) score += 1;
+
+    return score >= 4 ? 'java' : null;
   }
 
   _editor() {

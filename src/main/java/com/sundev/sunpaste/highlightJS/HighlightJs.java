@@ -87,6 +87,27 @@ public class HighlightJs extends Component implements HasSize {
         return getElement().getProperty("language", "auto");
     }
 
+    /**
+     * Enables or disables the built-in Java auto-detection heuristic used when
+     * {@link #getLanguage()} is set to {@code "auto"}.
+     *
+     * <p>When enabled, Java-like code patterns are detected before delegating to
+     * highlight.js auto-detection. This helps avoid false positives such as
+     * classifying Java snippets as SQL dialects.</p>
+     *
+     * @param useJavaHeuristic {@code true} to enable Java-first detection
+     */
+    public void setUseJavaHeuristic(boolean useJavaHeuristic) {
+        getElement().setProperty("useJavaHeuristic", useJavaHeuristic);
+    }
+
+    /**
+     * Returns whether Java-first auto-detection heuristic is enabled.
+     */
+    public boolean isUseJavaHeuristic() {
+        return getElement().getProperty("useJavaHeuristic", true);
+    }
+
     // -----------------------------------------------------------------------
     // Theme
     // -----------------------------------------------------------------------
