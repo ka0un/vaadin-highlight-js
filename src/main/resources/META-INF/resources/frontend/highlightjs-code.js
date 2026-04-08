@@ -52,6 +52,9 @@ class HighlightjsCode extends LitElement {
       /** Whether Java-first heuristic is applied before highlight.js auto-detection */
       useJavaHeuristic: { type: Boolean },
 
+      /** Whether Markdown heuristic is applied before highlight.js auto-detection */
+      useMarkdownHeuristic: { type: Boolean },
+
       /** highlight.js theme CSS name, e.g. "github-dark", "monokai" */
       theme: { type: String },
 
@@ -95,6 +98,7 @@ class HighlightjsCode extends LitElement {
     this.code = '';
     this.language = 'auto';
     this.useJavaHeuristic = true;
+    this.useMarkdownHeuristic = true;
     this.theme = 'vs-dark';
     this.showLineNumbers = false;
     this.showLanguageBadge = true;
@@ -429,6 +433,11 @@ class HighlightjsCode extends LitElement {
       } catch(e) {}
     }
 
+    const markdownHeuristicMatch = this._detectMarkdownHeuristic(trimmed);
+    if (markdownHeuristicMatch) {
+      return markdownHeuristicMatch;
+    }
+
     const javaHeuristicMatch = this._detectJavaHeuristic(trimmed);
     if (javaHeuristicMatch) {
       return javaHeuristicMatch;
@@ -436,6 +445,25 @@ class HighlightjsCode extends LitElement {
 
     const detected = hljs.highlightAuto(code);
     return detected.language || 'auto';
+  }
+
+  _detectMarkdownHeuristic(code) {
+    if (!this.useMarkdownHeuristic || !code) {
+      return null;
+    }
+
+    let score = 0;
+    if (/^\s{0,3}#{1,6}\s+\S+/m.test(code)) score += 2;
+    if (/^\s{0,3}>\s+\S+/m.test(code)) score += 1;
+    if (/^\s{0,3}[-*+]\s+\S+/m.test(code)) score += 2;
+    if (/^\s{0,3}\d+\.\s+\S+/m.test(code)) score += 2;
+    if (/\[[^\]]+\]\([^\)]+\)/.test(code)) score += 2;
+    if (/`[^`\n]+`/.test(code)) score += 1;
+    if (/\*\*[^*\n]+\*\*/.test(code) || /\*[^*\n]+\*/.test(code) || /_[^_\n]+_/.test(code)) score += 1;
+    if (/^\s{0,3}```[\w-]*\s*$/m.test(code)) score += 3;
+    if (/\n/.test(code)) score += 1;
+
+    return score >= 4 ? 'markdown' : null;
   }
 
   _detectJavaHeuristic(code) {

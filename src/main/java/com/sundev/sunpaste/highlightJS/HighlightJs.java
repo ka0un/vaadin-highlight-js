@@ -108,6 +108,27 @@ public class HighlightJs extends Component implements HasSize {
         return getElement().getProperty("useJavaHeuristic", true);
     }
 
+    /**
+     * Enables or disables the built-in Markdown auto-detection heuristic used
+     * when {@link #getLanguage()} is set to {@code "auto"}.
+     *
+     * <p>When enabled, Markdown-like structures (headings, lists, links,
+     * fenced code blocks) are detected before delegating to highlight.js
+     * auto-detection.</p>
+     *
+     * @param useMarkdownHeuristic {@code true} to enable Markdown-first detection
+     */
+    public void setUseMarkdownHeuristic(boolean useMarkdownHeuristic) {
+        getElement().setProperty("useMarkdownHeuristic", useMarkdownHeuristic);
+    }
+
+    /**
+     * Returns whether Markdown-first auto-detection heuristic is enabled.
+     */
+    public boolean isUseMarkdownHeuristic() {
+        return getElement().getProperty("useMarkdownHeuristic", true);
+    }
+
     // -----------------------------------------------------------------------
     // Theme
     // -----------------------------------------------------------------------

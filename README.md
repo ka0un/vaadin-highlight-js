@@ -13,6 +13,7 @@ A modern, high-performance Vaadin Flow wrapper combining the power of [Monaco Ed
 - **🪄 Intelligent Auto-Formatting**: Integrated `js-beautify` and Monaco's internal logic to pretty-print messy code automatically on paste.
 - **🚀 Live Syntax Highlighting**: Real-time coloring as you type, supporting hundreds of languages via Highlight.js and Monaco.
 - **☕ Java-First Auto Detection**: Prevents common Java snippets from being misclassified as SQL dialects in `auto` mode.
+- **📝 Markdown-First Auto Detection**: Prioritizes Markdown headings, lists, links, and inline formatting in `auto` mode.
 - **⌨️ Smart Coding Helpers**: Includes Tab-to-space conversion and intelligent indentation logic for a natural IDE feel.
 - **🔢 Gutter & Line Numbers**: Professional line numbering that can be toggled on/off.
 - **📋 Management Tools**: Built-in "Copy to Clipboard" and "Clear All" buttons with visual feedback.
@@ -68,6 +69,7 @@ The main Vaadin component that acts as a proxy for the Monaco-based frontend.
 | `setCode(String)` | Sets the code. Updates the editor live if not being edited. |
 | `setLanguage(String)` | Sets the language. Supports "auto" for smart detection. |
 | `setUseJavaHeuristic(boolean)` | Enables/disables Java-first detection in `auto` mode. |
+| `setUseMarkdownHeuristic(boolean)` | Enables/disables Markdown-first detection in `auto` mode. |
 | `setTheme(Theme)` | Switches between Light and Dark Monaco themes. |
 | `setShowClearButton(bool)` | Toggles the red "Clear All" button. |
 | `setShowCopyButton(bool)` | Toggles the clipboard action. |

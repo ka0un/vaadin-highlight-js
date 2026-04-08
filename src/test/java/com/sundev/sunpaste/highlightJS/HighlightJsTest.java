@@ -15,6 +15,7 @@ class HighlightJsTest {
         assertEquals("", hljs.getCode());
         assertFalse(hljs.isShowLineNumbers());
         assertTrue(hljs.isUseJavaHeuristic());
+        assertTrue(hljs.isUseMarkdownHeuristic());
     }
 
     @Test
@@ -57,6 +58,13 @@ class HighlightJsTest {
         HighlightJs hljs = new HighlightJs();
         hljs.setUseJavaHeuristic(false);
         assertFalse(hljs.isUseJavaHeuristic());
+    }
+
+    @Test
+    void markdownHeuristicCanBeDisabled() {
+        HighlightJs hljs = new HighlightJs();
+        hljs.setUseMarkdownHeuristic(false);
+        assertFalse(hljs.isUseMarkdownHeuristic());
     }
 
     @Test
