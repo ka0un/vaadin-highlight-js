@@ -17,6 +17,11 @@ A modern, high-performance Vaadin Flow wrapper for [Highlight.js](https://highli
 - **🔍 Auto-Detection**: Let Highlight.js automatically identify the programming language.
 - **📂 Filename Labels**: Support for displaying filenames above code blocks.
 
+## 📖 Documentation
+
+For a deep dive into the project structure, architectural logic, and production guidelines, please refer to the:
+**👉 [Project Guidelines and Explanation Document](PROJECT_GUIDELINES.md)**
+
 ## 🚀 Getting Started
 
 ### Installation
