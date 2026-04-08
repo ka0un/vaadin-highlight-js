@@ -109,39 +109,98 @@ class HighlightjsCode extends LitElement {
   // -------------------------------------------------------------------------
 
   _highlight() {
-    if (!this.code) return { value: '', language: '' };
+    if (!this.code) return { value: '', language: '', formattedCode: '' };
 
     let codeToHighlight = this.code;
+    let effectiveLanguage = (this.language || 'auto').toLowerCase();
+
+    // 1. If language is auto, detect it first to pick the right formatter
+    if (effectiveLanguage === 'auto' || effectiveLanguage === '') {
+      const result = hljs.highlightAuto(codeToHighlight);
+      effectiveLanguage = result.language || 'auto';
+    }
+
+    // 2. Format code if requested
     if (this.formatCode) {
       try {
-        const langCode = (this.language || 'auto').toLowerCase();
-        let formatted = codeToHighlight;
-        if (langCode === 'html' || langCode === 'xml') {
-          formatted = beautify.html(codeToHighlight, { indent_size: 2, wrap_line_length: 80 });
-        } else if (langCode === 'css' || langCode === 'scss' || langCode === 'less') {
-          formatted = beautify.css(codeToHighlight, { indent_size: 2 });
-        } else {
-          // Default to JS for JSON, JS, TS, etc. For unknown languages it might make it weird
-          // but we can try basic formatting
-          formatted = beautify.js(codeToHighlight, { indent_size: 2 });
+        const lang = effectiveLanguage;
+        // Check if beautify is loaded correctly
+        const b = beautify || (window.beautify);
+        
+        if (b) {
+          if (lang === 'html' || lang === 'xml') {
+            codeToHighlight = b.html(codeToHighlight, { indent_size: 2, wrap_line_length: 120 });
+          } else if (lang === 'css' || lang === 'scss' || lang === 'less') {
+            codeToHighlight = b.css(codeToHighlight, { indent_size: 2 });
+          } else if (['javascript', 'js', 'typescript', 'ts', 'json', 'java', 'c', 'cpp', 'cs', 'php', 'rust', 'go'].includes(lang)) {
+            codeToHighlight = b.js(codeToHighlight, { indent_size: 4, space_in_empty_paren: true });
+          } else if (lang === 'python') {
+            codeToHighlight = this._beautifyPython(codeToHighlight);
+          } else {
+            // Default: try JS beautifier as it handles many brace-based languages decently
+            codeToHighlight = b.js(codeToHighlight, { indent_size: 4 });
+          }
         }
-        codeToHighlight = formatted;
       } catch (e) {
-        // Fallback to original code if formatting fails
+        console.warn('highlightjs-code: Formatting failed', e);
       }
     }
 
+    // 3. Highlight the (potentially formatted) code
+    let highlightResult;
     if (this.language && this.language !== 'auto') {
       try {
-        const result = hljs.highlight(codeToHighlight, { language: this.language });
-        return { value: result.value, language: result.language, formattedCode: codeToHighlight };
+        highlightResult = hljs.highlight(codeToHighlight, { language: this.language });
       } catch (e) {
-        // Unknown language — fall back to auto-detect
+        highlightResult = hljs.highlightAuto(codeToHighlight);
       }
+    } else {
+      highlightResult = hljs.highlightAuto(codeToHighlight);
     }
 
-    const result = hljs.highlightAuto(codeToHighlight);
-    return { value: result.value, language: result.language, formattedCode: codeToHighlight };
+    return { 
+      value: highlightResult.value, 
+      language: highlightResult.language, 
+      formattedCode: codeToHighlight 
+    };
+  }
+
+  /**
+   * Simple rule-based Python beautifier since js-beautify doesn't support it.
+   * Handles basic indentation based on colons and keywords.
+   */
+  _beautifyPython(code) {
+    if (!code) return '';
+    const lines = code.split('\n');
+    let indentLevel = 0;
+    const indentStr = '    ';
+    const result = [];
+
+    for (let i = 0; i < lines.length; i++) {
+      let line = lines[i].trim();
+      if (line.length === 0) {
+        result.push('');
+        continue;
+      }
+
+      // Keywords that typically decrease indent of the CURRENT line
+      if (/^(elif|else|except|finally)\b/.test(line)) {
+        indentLevel = Math.max(0, indentLevel - 1);
+      }
+
+      // Add the line with current indentation
+      result.push(indentStr.repeat(indentLevel) + line);
+
+      // Keywords that typically increase indent for the NEXT line
+      if (line.endsWith(':')) {
+        indentLevel++;
+      }
+      
+      // Heuristic: if next line starts with a keyword that breaks a block, we might need to un-indent
+      // But it's hard to do without looking ahead. 
+      // For now, let's just use the basic logic.
+    }
+    return result.join('\n');
   }
 
   _buildLines(highlightedHtml) {
