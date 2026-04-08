@@ -13,7 +13,7 @@ import com.sundev.sunpaste.util.Theme;
  * <p>Provides server-side Java API for the {@code <highlightjs-code>} web component,
  * which performs client-side syntax highlighting using highlight.js.</p>
  *
- * <h3>Basic usage:</h3>
+ * <h2>Basic usage:</h2>
  * <pre>{@code
  * HighlightJs highlight = new HighlightJs();
  * highlight.setCode("public class Hello { }");

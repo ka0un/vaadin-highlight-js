@@ -1,5 +1,7 @@
 # HighlightJS & Monaco Vaadin Wrapper
 
+[![Published on Vaadin Directory](https://img.shields.io/badge/Vaadin%20Directory-published-00b4f0.svg)](https://vaadin.com/directory/component/ka0un/highlightjs-vaadin-wrapper)
+
 A modern, high-performance Vaadin Flow wrapper combining the power of [Monaco Editor](https://microsoft.github.io/monaco-editor/) and [Highlight.js](https://highlightjs.org/), providing a premium, unified code viewing and editing experience.
 
 ![Vaadin](https://img.shields.io/badge/Vaadin-v24+-00B4F0?style=for-the-badge&logo=vaadin)
@@ -89,6 +91,17 @@ The wrapper utilizes the following npm packages:
 - `monaco-editor`: The core editor engine.
 - `highlight.js`: Used for language auto-detection logic.
 - `js-beautify`: Backend for the "Format on Paste" feature.
+
+## 📤 Publishing
+
+For Vaadin Directory publication, publish a non-SNAPSHOT release to a public Maven repository.
+
+```bash
+mvn clean verify
+mvn -Prelease clean deploy
+```
+
+Before publishing, update repository metadata in `pom.xml` (project URL/SCM/developer details) and ensure your Sonatype credentials/GPG setup are configured locally.
 
 ---
 Developed with ❤️ by **SunDev** 🚀
