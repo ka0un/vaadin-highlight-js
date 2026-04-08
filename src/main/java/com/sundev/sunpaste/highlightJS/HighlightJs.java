@@ -2,7 +2,6 @@ package com.sundev.sunpaste.highlightJS;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasSize;
-import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
@@ -26,8 +25,9 @@ import com.sundev.sunpaste.util.Theme;
 @Tag("highlightjs-code")
 @NpmPackage(value = "highlight.js", version = "11.9.0")
 @NpmPackage(value = "js-beautify", version = "1.15.1")
+@NpmPackage(value = "monaco-editor", version = "0.45.0")
 @JsModule("./highlightjs-code.js")
-public class HighlightJs extends Component implements HasSize, HasStyle {
+public class HighlightJs extends Component implements HasSize {
 
     /**
      * Creates a new HighlightJs component with no code set.
@@ -170,6 +170,22 @@ public class HighlightJs extends Component implements HasSize, HasStyle {
     }
 
     /**
+     * Shows or hides the clear-all button.
+     *
+     * @param showClearButton {@code true} to show the clear button
+     */
+    public void setShowClearButton(boolean showClearButton) {
+        getElement().setProperty("showClearButton", showClearButton);
+    }
+
+    /**
+     * Returns whether the clear button is displayed.
+     */
+    public boolean isShowClearButton() {
+        return getElement().getProperty("showClearButton", true);
+    }
+
+    /**
      * Sets an optional filename label shown above the code block.
      *
      * @param filename e.g. "HelloWorld.java"
@@ -200,5 +216,21 @@ public class HighlightJs extends Component implements HasSize, HasStyle {
      */
     public boolean isFormatCode() {
         return getElement().getProperty("formatCode", false);
+    }
+
+    /**
+     * Sets an optional badge label shown in the header (e.g., "ARCADE").
+     *
+     * @param badge the badge label text
+     */
+    public void setBadge(String badge) {
+        getElement().setProperty("badge", badge == null ? "" : badge);
+    }
+
+    /**
+     * Returns the currently set badge label.
+     */
+    public String getBadge() {
+        return getElement().getProperty("badge", "");
     }
 }

@@ -1,21 +1,22 @@
-# HighlightJS Vaadin Wrapper
+# HighlightJS & Monaco Vaadin Wrapper
 
-A modern, high-performance Vaadin Flow wrapper for [Highlight.js](https://highlightjs.org/), providing seamless syntax highlighting for your Java web applications.
+A modern, high-performance Vaadin Flow wrapper combining the power of [Monaco Editor](https://microsoft.github.io/monaco-editor/) and [Highlight.js](https://highlightjs.org/), providing a premium, unified code viewing and editing experience.
 
 ![Vaadin](https://img.shields.io/badge/Vaadin-v24+-00B4F0?style=for-the-badge&logo=vaadin)
+![Monaco](https://img.shields.io/badge/Monaco_Editor-v0.45+-007ACC?style=for-the-badge&logo=visual-studio-code)
 ![Highlight.js](https://img.shields.io/badge/Highlight.js-v11.9-F05032?style=for-the-badge&logo=javascript)
-![Java](https://img.shields.io/badge/Java-17+-ED8B00?style=for-the-badge&logo=openjdk)
 
 ## ✨ Features
 
-- **🚀 Client-side Performance**: Powered by Highlight.js for fast, browser-side syntax highlighting.
-- **🎨 20+ Pre-bundled Themes**: Support for popular themes like GitHub Dark, Monokai, Dracula, Nord, and more.
-- **🔢 Line Numbers**: Optional line numbering for better code readability.
-- **📋 Copy to Clipboard**: Built-in button for easy code sharing.
-- **🏷️ Language Badges**: Automatically displays the detected or specified language.
-- **🪄 Auto-Formatting**: Integrated `js-beautify` to pretty-print minified or messy code.
-- **🔍 Auto-Detection**: Let Highlight.js automatically identify the programming language.
-- **📂 Filename Labels**: Support for displaying filenames above code blocks.
+- **🎨 Premium Editing Experience**: Powered by the **Monaco Editor** (the engine behind VS Code) for professional-grade code interaction.
+- **🔄 Unified Interface**: A single, seamless panel for both viewing and editing. Paste code to see it beautifully highlighted instantly.
+- **🪄 Intelligent Auto-Formatting**: Integrated `js-beautify` and Monaco's internal logic to pretty-print messy code automatically on paste.
+- **🚀 Live Syntax Highlighting**: Real-time coloring as you type, supporting hundreds of languages via Highlight.js and Monaco.
+- **⌨️ Smart Coding Helpers**: Includes Tab-to-space conversion and intelligent indentation logic for a natural IDE feel.
+- **🔢 Gutter & Line Numbers**: Professional line numbering that can be toggled on/off.
+- **📋 Management Tools**: Built-in "Copy to Clipboard" and "Clear All" buttons with visual feedback.
+- **🏷️ Status Badges**: Displays detected languages and custom project badges (e.g., "ARCADE").
+- **📂 macOS Aesthetics**: Premium header bar with decorative "traffic light" dots and filename labels.
 
 ## 📖 Documentation
 
@@ -26,11 +27,11 @@ For a deep dive into the project structure, architectural logic, and production 
 
 ### Installation
 
-Currently, this component is integrated directly into the project. To use it, ensure you have the following files in your project:
+Currently, this component is integrated directly into the project. To use it, ensure you have the following files:
 
 - `HighlightJs.java`: Core Vaadin component.
 - `Theme.java`: Enum containing supported themes.
-- `highlightjs-code.js`: JavaScript connector (located in `src/main/resources/META-INF/resources/frontend/`).
+- `highlightjs-code.js`: The Lit/Monaco frontend connector.
 
 ### Basic Usage
 
@@ -38,7 +39,7 @@ Currently, this component is integrated directly into the project. To use it, en
 HighlightJs codeBlock = new HighlightJs();
 codeBlock.setCode("public class HelloWorld {\n    public static void main(String[] args) {\n        System.out.println(\"Hello World\");\n    }\n}");
 codeBlock.setLanguage("java");
-codeBlock.setTheme(Theme.GITHUB_DARK);
+codeBlock.setTheme(Theme.GITHUB_DARK); // Maps to Monaco Dark
 codeBlock.setShowLineNumbers(true);
 
 add(codeBlock);
@@ -50,50 +51,40 @@ add(codeBlock);
 HighlightJs advanced = new HighlightJs(myRawCode, "python");
 advanced.setTheme(Theme.DRACULA);
 advanced.setShowCopyButton(true);
-advanced.setShowLanguageBadge(true);
-advanced.setFilename("script.py");
-advanced.setFormatCode(true); // Automatically prettify the input code
+advanced.setShowClearButton(true);
+advanced.setBadge("PRO-EDIT");
+advanced.setFilename("main.py");
+advanced.setFormatCode(true); // Automatically prettify input on paste/blur
 ```
 
 ## 🛠️ Components
 
 ### `HighlightJs`
-The main Vaadin component that extends `Component` and implements `HasSize` and `HasStyle`.
+The main Vaadin component that acts as a proxy for the Monaco-based frontend.
 
 | Method | Description |
 |--------|-------------|
-| `setCode(String)` | Sets the raw source code to be highlighted. |
-| `setLanguage(String)` | Sets the language (e.g., "java", "python", "auto"). |
-| `setTheme(Theme)` | Sets the visual theme using the `Theme` enum. |
-| `setShowLineNumbers(boolean)` | Toggles the display of line numbers. |
-| `setShowCopyButton(boolean)` | Toggles the copy-to-clipboard button. |
-| `setFormatCode(boolean)` | Enables/disables automatic code beautification. |
-| `setFilename(String)` | Displays a filename label above the code block. |
-
-### `Theme`
-An enum containing a curated list of supported Highlight.js themes:
-
-- `GITHUB_DARK` (Default)
-- `MONOKAI`
-- `DRACULA`
-- `ATOM_ONE_DARK`
-- `SOLARIZED_DARK`
-- ... and many others.
+| `setCode(String)` | Sets the code. Updates the editor live if not being edited. |
+| `setLanguage(String)` | Sets the language. Supports "auto" for smart detection. |
+| `setTheme(Theme)` | Switches between Light and Dark Monaco themes. |
+| `setShowClearButton(bool)` | Toggles the red "Clear All" button. |
+| `setShowCopyButton(bool)` | Toggles the clipboard action. |
+| `setFormatCode(boolean)` | Enables/disables auto-beautification. |
+| `setBadge(String)` | Sets the text for the header badge. |
 
 ## 🖥️ Demo View
 
-The project includes a comprehensive demo accessible at `/highlight-demo`. It features:
-- A real-time code editor (TextArea).
-- Dynamic theme switching.
-- Auto-detection and formatting toggles.
-
-To run the demo, simply run the Spring Boot application and navigate to `http://localhost:8080/highlight-demo`.
+The project includes a comprehensive demo `/highlight-demo` showing:
+- Real-time interaction between Java and Monaco.
+- Theme toggling (Light/Dark).
+- Dynamic property updates (Line numbers, Badges, etc.).
 
 ## 📦 Dependencies
 
 The wrapper utilizes the following npm packages:
-- `highlight.js` (11.9.0)
-- `js-beautify` (1.15.1)
+- `monaco-editor`: The core editor engine.
+- `highlight.js`: Used for language auto-detection logic.
+- `js-beautify`: Backend for the "Format on Paste" feature.
 
 ---
-Developed by **SunDev** 🚀
+Developed with ❤️ by **SunDev** 🚀
