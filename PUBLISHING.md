@@ -84,6 +84,13 @@ If Maven cannot find `gpg`, install it first (for example on macOS):
 brew install gnupg
 ```
 
+If deployment fails with `402 Payment Required`, your Sonatype account likely does not yet have permission for the `com.sundev.sunpaste` namespace, or the Central publishing flow has not been provisioned for your account.
+
+In that case you have two paths:
+
+1. **For Vaadin Directory submission only**: you can proceed with the GitHub repository, `README.md`, and `vaadin-directory-description.md`.
+2. **For Maven Central publishing**: claim/provision the namespace in Sonatype Central and then retry `mvn clean deploy -Prelease`.
+
 ### 5. Release from Sonatype
 
 Visit https://s01.oss.sonatype.org/ and:
@@ -98,6 +105,7 @@ Fill in:
 - **Component Name**: HighlightJS & Monaco Vaadin Wrapper
 - **Description**: (Use `vaadin-directory-description.md`)
 - **Repository**: https://github.com/ka0un/vaadin-highlight-js
+- **Component link / package**: use the GitHub repository URL if requested
 - **Maven**: `com.sundev.sunpaste:highlightJS-vaadin-wrapper:1.0.0`
 - **License**: MIT
 
